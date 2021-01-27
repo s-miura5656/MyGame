@@ -25,7 +25,7 @@ namespace CarGame.Core
         {
             AddSpeed(addSpeed);
 
-            _transform.position += _transform.forward * _speed;
+            //_transform.position += _transform.forward * _speed;
         }
 
         private void AddSpeed(float acceleration) 

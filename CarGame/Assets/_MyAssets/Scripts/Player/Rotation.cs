@@ -6,6 +6,7 @@ public class Rotation
 {
     private Transform _transform = null;
     private float _angle = 0f;
+    private float _wheelSpeed = 10f;
 
     #region コンストラクタ
     public Rotation() { }
@@ -13,6 +14,13 @@ public class Rotation
     {
         _transform = transform;
     }
+
+    public Rotation(Transform transform, float wheelSpeed)
+    {
+        _transform  = transform;
+        _wheelSpeed = wheelSpeed;
+    }
+
     #endregion
 
     public void Car(Vector3 inputDir) 
@@ -28,6 +36,6 @@ public class Rotation
 
     public void Wheel() 
     {
-        _transform.rotation = Quaternion.Euler(Vector3.right * 0.1f);
+        _transform.Rotate(Vector3.right * _wheelSpeed);
     }
 }
