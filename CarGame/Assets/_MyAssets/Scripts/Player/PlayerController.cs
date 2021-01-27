@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
 
     private IInputProvider _input = null;
 
-    private Move _move = null;
+    private Move _move             = null;
     private Rotation _bodyRotation = null;
     private List<Rotation> _wheelRotations = new List<Rotation>();
 

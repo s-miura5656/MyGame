@@ -29,7 +29,7 @@ public class Rotation
 
         _angle += addAngle;
 
-        _angle = Mathf.Clamp(_angle, -30, 30);
+        _angle = Mathf.Clamp(_angle, -20, 20);
 
         _transform.rotation = Quaternion.Euler(Vector3.up * _angle);
     }
