@@ -8,15 +8,15 @@ using CarGame.Core;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float _maxSpeed      = 1.0f;
-    [SerializeField] private float _frameAddSpeed = 1.0f;
-    [SerializeField] private Rigidbody _rb        = null;
-    [SerializeField] private Transform _transform = null;
+    [SerializeField] private float _maxSpeed              = 1.0f;
+    [SerializeField] private float _frameAddSpeed         = 1.0f;
+    [SerializeField] private Rigidbody _rb                = null;
+    [SerializeField] private Transform _transform         = null;
 
     private IInputProvider _input = null;
     
-    private Move _move         = null;
-    private Rotation _rotation = null;
+    private Move _move                 = null;
+    private List<Rotation> _rotations  = new List<Rotation>();
 
     void Start()
     {
@@ -26,8 +26,14 @@ public class PlayerController : MonoBehaviour
             .TakeUntilDestroy(this)
             .Subscribe(_ => {
                 _move.Car(_frameAddSpeed);
-                _rotation.Car(_input.GetMoveDir());
-                
+                _rotations[0].Car(_input.GetMoveDir());
+            });
+
+        Observable.EveryUpdate()
+            .TakeUntilDestroy(this)
+            .Subscribe(_ => {
+                _move.Car(_frameAddSpeed);
+                _rotations[0].Car(_input.GetMoveDir());
             });
     }
 
@@ -35,7 +41,7 @@ public class PlayerController : MonoBehaviour
     {
         _input    = new UnityInputProvider();
         _move     = new Move(_rb, _transform, _maxSpeed);
-        _rotation = new Rotation(_transform);
+        _rotations.Add(new Rotation(_transform));
     }
 
     private void Reset()

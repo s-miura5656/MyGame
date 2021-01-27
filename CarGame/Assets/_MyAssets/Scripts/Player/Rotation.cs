@@ -25,4 +25,9 @@ public class Rotation
 
         _transform.rotation = Quaternion.Euler(Vector3.up * _angle);
     }
+
+    public void Wheel() 
+    {
+        _transform.rotation = Quaternion.Euler(Vector3.right * 0.1f);
+    }
 }
