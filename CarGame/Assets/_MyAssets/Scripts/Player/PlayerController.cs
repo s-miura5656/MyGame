@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
+using Zenject;
 //! TODO:MyNameSpace
 using CarGame.Core;
 
@@ -15,7 +16,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform _bodyTransform     = null;
     [SerializeField] private Transform[] _wheelTransforms = { null };
 
+    [Inject]
     private IInputProvider _input = null;
+
+    [Inject]
+    private IPlayerParametor _playerParametor = null;
 
     private Move _move             = null;
     private Rotation _bodyRotation = null;
@@ -27,9 +32,18 @@ public class PlayerController : MonoBehaviour
 
         Observable.EveryUpdate()
             .TakeUntilDestroy(this)
+            .Where(energy => _playerParametor.GetEnergy() != 0)
             .Subscribe(_ => {
                 _move.Car(_frameAddSpeed);
                 _bodyRotation.Car(_input.GetMoveDir());
+                Debugger.Log(_playerParametor.GetEnergy());
+            });
+
+        Observable.EveryUpdate()
+            .Where(lostEnergy => _move.LostEnergyTiming)
+            .TakeUntilDestroy(this)
+            .Subscribe(count => {
+                _playerParametor.SetEnergy(-2);
             });
 
         Observable.EveryUpdate()
@@ -41,10 +55,6 @@ public class PlayerController : MonoBehaviour
 
     private void Initialize()
     {
-#if UNITY_EDITOR
-        _input = new UnityInputProvider();
-#elif UNITY_ANDROID
-#endif
         _move = new Move(_rb, _bodyTransform, _maxSpeed);
         _bodyRotation = new Rotation(_bodyTransform);
 

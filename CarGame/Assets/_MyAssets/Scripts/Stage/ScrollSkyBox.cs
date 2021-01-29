@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 
+
 public class ScrollSkyBox : MonoBehaviour
 {
     [SerializeField] private Material _skybox = null;

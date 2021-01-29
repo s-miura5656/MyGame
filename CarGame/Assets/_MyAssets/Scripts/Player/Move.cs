@@ -1,15 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 namespace CarGame.Core 
 {
     public class Move
     {
-        private Rigidbody _rb        = null;
-        private Transform _transform = null;
-        private float _speed         = 0f;
-        private float _maxSpeed      = 5f;
+        private Rigidbody _rb          = null;
+        private Transform _transform   = null;
+        private float _speed           = 0f;
+        private float _maxSpeed        = 5f;
+        private Vector3 _oldPos        = Vector3.zero;
+        private bool _lostEnergyTiming = false;
 
         #region コンストラクタ
         public Move() { }
@@ -21,11 +24,26 @@ namespace CarGame.Core
         }
         #endregion
 
+        public bool LostEnergyTiming { get { return _lostEnergyTiming; } }
+
         public void Car(float addSpeed)
         {
+            if (_lostEnergyTiming)
+                _lostEnergyTiming = false;
+
             AddSpeed(addSpeed);
 
             _transform.position += _transform.forward * _speed;
+
+            var x = Mathf.Clamp(_transform.position.x, -3, 3);
+
+            _transform.position = new Vector3(x, _transform.position.y, _transform.position.z);
+
+            if (_transform.position.z >_oldPos.z + 10)
+            {
+                _oldPos = _transform.position;
+                _lostEnergyTiming = true;
+            }
         }
 
         private void AddSpeed(float acceleration) 
