@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _maxSpeed              = 1.0f;
     [SerializeField] private float _frameAddSpeed         = 1.0f;
     [SerializeField] private float _wheelSpeed            = 10f;
+    [SerializeField] private float _downEnergy            = 10f;
     [SerializeField] private Rigidbody _rb                = null;
     [SerializeField] private Transform _bodyTransform     = null;
     [SerializeField] private Transform[] _wheelTransforms = { null };
@@ -26,30 +27,24 @@ public class PlayerController : MonoBehaviour
     private Rotation _bodyRotation = null;
     private List<Rotation> _wheelRotations = new List<Rotation>();
 
+
     void Start()
     {
         Initialize();
 
         Observable.EveryUpdate()
             .TakeUntilDestroy(this)
-            .Where(energy => _playerParametor.GetEnergy() != 0)
             .Subscribe(_ => {
-                _move.Car(_frameAddSpeed);
+                _move.Car(MoveFrameSpeed());
                 _bodyRotation.Car(_input.GetMoveDir());
-                Debugger.Log(_playerParametor.GetEnergy());
+                wheelRotation();
             });
 
         Observable.EveryUpdate()
             .Where(lostEnergy => _move.LostEnergyTiming)
             .TakeUntilDestroy(this)
             .Subscribe(count => {
-                _playerParametor.SetEnergy(-2);
-            });
-
-        Observable.EveryUpdate()
-            .TakeUntilDestroy(this)
-            .Subscribe(animation => {
-                wheelRotation();
+                _playerParametor.SetEnergy(-_downEnergy);
             });
     }
 
@@ -60,7 +55,7 @@ public class PlayerController : MonoBehaviour
 
         foreach (var transform in _wheelTransforms)
         {
-            _wheelRotations.Add(new Rotation(transform, _wheelSpeed));
+            _wheelRotations.Add(new Rotation(transform));
         }
     }
 
@@ -68,8 +63,13 @@ public class PlayerController : MonoBehaviour
     {
         foreach (var rotation in _wheelRotations)
         {
-            rotation.Wheel();
+            rotation.Wheel(MoveFrameSpeed());
         }
+    }
+
+    private float MoveFrameSpeed() 
+    {
+        return _playerParametor.GetEnergy() != 0 ? _frameAddSpeed : -_frameAddSpeed;
     }
 
     private void Reset()

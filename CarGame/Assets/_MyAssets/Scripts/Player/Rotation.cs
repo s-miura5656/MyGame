@@ -9,7 +9,6 @@ namespace CarGame.Core
     {
         private Transform _transform = null;
         private float _angle         = 0f;
-        private float _wheelSpeed    = 10f;
         private float _lerpEndTime   = 5;
         private float _angleLimit    = 15f;
              
@@ -19,13 +18,6 @@ namespace CarGame.Core
         {
             _transform = transform;
         }
-
-        public Rotation(Transform transform, float wheelSpeed)
-        {
-            _transform = transform;
-            _wheelSpeed = wheelSpeed;
-        }
-
         #endregion
 
         public void Car(Vector3 inputDir)
@@ -48,9 +40,9 @@ namespace CarGame.Core
                 _angle = Mathf.Lerp(_angle, 0, Time.deltaTime * _lerpEndTime);
         }
 
-    public void Wheel()
+    public void Wheel(float wheelSpeed)
         {
-            _transform.Rotate(Vector3.right * _wheelSpeed);
+            _transform.Rotate(Vector3.right * wheelSpeed);
         }
     }
 }

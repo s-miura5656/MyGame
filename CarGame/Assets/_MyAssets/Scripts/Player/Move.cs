@@ -35,9 +35,12 @@ namespace CarGame.Core
 
             _transform.position += _transform.forward * _speed;
 
-            var x = Mathf.Clamp(_transform.position.x, -3, 3);
 
-            _transform.position = new Vector3(x, _transform.position.y, _transform.position.z);
+            var x = Mathf.Clamp(_transform.position.x, -3, 3);
+            
+            var movePosition = new Vector3(x, _transform.position.y, _transform.position.z);
+
+            _transform.position = movePosition;
 
             if (_transform.position.z >_oldPos.z + 10)
             {
