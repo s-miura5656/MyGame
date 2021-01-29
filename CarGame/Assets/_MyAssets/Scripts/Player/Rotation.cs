@@ -1,41 +1,48 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Rotation
+namespace CarGame.Core
 {
-    private Transform _transform = null;
-    private float _angle = 0f;
-    private float _wheelSpeed = 10f;
-
-    #region コンストラクタ
-    public Rotation() { }
-    public Rotation(Transform transform)
+    public class Rotation
     {
-        _transform = transform;
-    }
+        private Transform _transform = null;
+        private float _angle         = 0f;
+        private float _lerpEndTime   = 5;
+        private float _angleLimit    = 15f;
+             
+        #region コンストラクタ
+        public Rotation() { }
+        public Rotation(Transform transform)
+        {
+            _transform = transform;
+        }
+        #endregion
 
-    public Rotation(Transform transform, float wheelSpeed)
-    {
-        _transform  = transform;
-        _wheelSpeed = wheelSpeed;
-    }
+        public void Car(Vector3 inputDir)
+        {
+            if (inputDir.x == 0)
+                DirReset();
 
-    #endregion
+            float addAngle = inputDir.x;
 
-    public void Car(Vector3 inputDir) 
-    {
-        float addAngle = inputDir.x;
+            _angle += addAngle;
 
-        _angle += addAngle;
+            _angle = Mathf.Clamp(_angle, -_angleLimit, _angleLimit);
 
-        _angle = Mathf.Clamp(_angle, -30, 30);
+            _transform.rotation = Quaternion.Euler(Vector3.up * _angle);
+        }
 
-        _transform.rotation = Quaternion.Euler(Vector3.up * _angle);
-    }
+        private void DirReset() 
+        {
+            if (_angle != 0)
+                _angle = Mathf.Lerp(_angle, 0, Time.deltaTime * _lerpEndTime);
+        }
 
-    public void Wheel() 
-    {
-        _transform.Rotate(Vector3.right * _wheelSpeed);
+    public void Wheel(float wheelSpeed)
+        {
+            _transform.Rotate(Vector3.right * wheelSpeed);
+        }
     }
 }
